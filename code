@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+ 
+typedef struct ToDo {
+    char buffer[101];
+    struct ToDo* next;
+    int count;
+} todo;
+ 
+todo* start = NULL;
+ 
+void interface();
+void seetodo();
+void createtodo();
+void deletetodo();
+void adjustcount();
+ 
+int main() {
+    int choice;
+    while (1) {
+        system("cls");
+        printf("1. To see your ToDo list\n");
+        printf("2. To create a new ToDo\n");
+        printf("3. To delete a ToDo\n");
+        printf("4. Exit\n");
+        printf("\n\nEnter your choice: ");
+        scanf("%d", &choice);
+ 
+        switch (choice) {
+            case 1:
+                seetodo();
+                break;
+            case 2:
+                createtodo();
+                break;
+            case 3:
+                deletetodo();
+                break;
+            case 4:
+                exit(0);
+                break;
+            default:
+                printf("Invalid Choice :-(\n");
+                system("pause");
+        }
+    }
+    return 0;
+}
+void seetodo() {
+    system("cls");
+    todo* temp = start;
+    if (start == NULL) {
+        printf("\n\nEmpty ToDo\n\n");
+    }
+    while (temp != NULL) {
+        printf("%d.) %s\n", temp->count, temp->buffer);
+        temp = temp->next;
+    }
+    printf("\n\n");
+    system("pause");
+}
+void createtodo() {
+    char c;
+    todo* add, * temp;
+    system("cls");
+    while (1) {
+        printf("\nWant to add a new ToDo?"
+            " Press 'y' for Yes and 'n'"
+            " for No :-)\n\t\t");
+        fflush(stdin);
+        scanf(" %c", &c);
+        if (c == 'n') {
+            break;
+        }
+        else {
+            add = (todo*)malloc(sizeof(todo));
+            printf("\nType it.....\n");
+            fflush(stdin);
+            gets(add->buffer);
+            add->count = 1;
+            add->next = NULL;
+            if (start == NULL) {
+                start = add;
+            }
+            else {
+                temp = start;
+                while (temp->next != NULL) {
+                    temp = temp->next;
+                }
+                temp->next = add;
+            }
+            adjustcount();
+        }
+    }
+}
+void deletetodo() {
+    system("cls");
+    int x;
+    todo* del, * temp;
+    printf("\nEnter the ToDo's number"
+        " that you want to remove.\n\t\t");
+    if (start == NULL) {
+        printf("\n\nThere is no ToDo"
+            " for today :-)\n\n\n");
+    }
+    else {
+        scanf("%d", &x);
+        del = start;
+        temp = start->next;
+        if (del->count == x) {
+            start = start->next;
+            free(del);
+            adjustcount();
+        }
+        else {
+            while (temp != NULL) {
+                if (temp->count == x) {
+                    del->next = temp->next;
+                    free(temp);
+                    adjustcount();
+                    break;
+                }
+                else {
+                    del = temp;
+                    temp = temp->next;
+                }
+            }
+        }
+    }
+    system("pause");
+}
+void adjustcount() {
+    int i = 1;
+    todo* temp = start;
+    while (temp != NULL) {
+        temp->count = i;
+        i++;
+        temp = temp->next;
+    }
+}
